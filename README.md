@@ -55,10 +55,17 @@ import (
         "fmt"
         "log"
 
-        "gopkg.in/yaml.v2"
+        "github.com/renzhan/yamlref"
 )
 
 var data = `
+service:
+  base: 10.10.50.13
+
+http:
+  server:
+    address: http://${service.base}/path1:8000
+
 a: Easy!
 b:
   c: 2
@@ -68,11 +75,21 @@ b:
 // Note: struct fields must be public in order for unmarshal to
 // correctly populate the data.
 type T struct {
-        A string
-        B struct {
-                RenamedC int   `yaml:"c"`
-                D        []int `yaml:",flow"`
-        }
+	Service struct {
+		Base    string `yaml:"base"`
+	} `yaml:"service"`
+
+	Http struct {
+		Server struct {
+			Address string `yaml:"address"`
+		} `yaml:"server"`
+	} `yaml:"http"`
+
+	A string
+	B struct {
+		RenamedC int   `yaml:"c"`
+		D        []int `yaml:",flow"`
+	}
 }
 
 func main() {

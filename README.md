@@ -126,18 +126,27 @@ func main() {
 This example will generate the following output:
 
 ```
+ref:  ${service.base}
+val:  10.10.50.13
 --- t:
-{Easy! {2 [3 4]}}
+{{10.10.50.13} {{http://10.10.50.13/path1:8000}} Easy! {2 [3 4]}}
 
 --- t dump:
+service:
+  base: 10.10.50.13
+http:
+  server:
+    address: http://10.10.50.13/path1:8000
 a: Easy!
 b:
   c: 2
   d: [3, 4]
 
 
+ref:  ${service.base}
+val:  10.10.50.13
 --- m:
-map[a:Easy! b:map[c:2 d:[3 4]]]
+map[a:Easy! b:map[c:2 d:[3 4]] http:map[server:map[address:http://10.10.50.13/path1:8000]] service:map[base:10.10.50.13]]
 
 --- m dump:
 a: Easy!
@@ -146,5 +155,10 @@ b:
   d:
   - 3
   - 4
+http:
+  server:
+    address: http://10.10.50.13/path1:8000
+service:
+  base: 10.10.50.13
 ```
 

@@ -439,26 +439,29 @@ func (d *decoder) scalar(n *node, out reflect.Value) bool {
 	if resolvedv := reflect.ValueOf(resolved); out.Type() == resolvedv.Type() {
 		// We've resolved to exactly the type we want, so use that.
 		// if include varible, need to replace
-		exp := regexp.MustCompile(`[w+.]*(\$\{[\w+.]+\})[w+.]*`)
-		ref := exp.FindString(resolved.(string))
-		if ref != "" {
-			var ok bool
-			var val string
-			fmt.Println("ref: ", ref)
-			if d.ref == nil {
-				d.ref = make(map[string]string)
-			}
-			if val, ok = d.ref[ref]; !ok {
-				val = findRef(d.doc, strings.Trim(ref, "${}"))
-				fmt.Println("val: ", val)
-			}
-			if val != "" {
-				if !ok {
-					d.ref[ref] = val
+		if resolvedv.Type().Name() == "string" {
+			exp := regexp.MustCompile(`[w+.]*(\$\{[\w+.]+\})[w+.]*`)
+			ref := exp.FindString(resolved.(string))
+			if ref != "" {
+				var ok bool
+				var val string
+				fmt.Println("ref: ", ref)
+				if d.ref == nil {
+					d.ref = make(map[string]string)
 				}
-				resolved = exp.ReplaceAllString(resolved.(string), val)
-				resolvedv = reflect.ValueOf(resolved)
+				if val, ok = d.ref[ref]; !ok {
+					val = findRef(d.doc, strings.Trim(ref, "${}"))
+					fmt.Println("val: ", val)
+				}
+				if val != "" {
+					if !ok {
+						d.ref[ref] = val
+					}
+					resolved = exp.ReplaceAllString(resolved.(string), val)
+					resolvedv = reflect.ValueOf(resolved)
+				}
 			}
+
 		}
 		out.Set(resolvedv)
 		return true

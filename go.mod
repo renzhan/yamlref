@@ -1,4 +1,4 @@
-module github.com/renzhan/yaml
+module github.com/renzhan/yamlref
 
 go 1.15
 
